@@ -1,6 +1,6 @@
 import "server-only";
 import { createClient } from "@supabase/supabase-js";
-import { SUPABASE_URL } from "@/lib/entorno";
+import { urlSupabase } from "@/lib/entorno";
 
 /**
  * Cliente con la CLAVE SECRETA de Supabase. Sólo servidor ("server-only"
@@ -14,7 +14,7 @@ export function crearClienteAdminAuth() {
   if (!clave) {
     throw new Error("Falta SUPABASE_SECRET_KEY en el entorno del servidor.");
   }
-  return createClient(SUPABASE_URL, clave, {
+  return createClient(urlSupabase(), clave, {
     auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
   });
 }

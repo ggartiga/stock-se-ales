@@ -1,7 +1,7 @@
 import "server-only";
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
-import { SUPABASE_CLAVE_PUBLICA, SUPABASE_URL } from "@/lib/entorno";
+import { clavePublicaSupabase, urlSupabase } from "@/lib/entorno";
 
 /**
  * Cliente de Supabase para Server Components, Server Actions y Route Handlers.
@@ -9,7 +9,7 @@ import { SUPABASE_CLAVE_PUBLICA, SUPABASE_URL } from "@/lib/entorno";
  */
 export async function crearClienteServidor() {
   const almacen = await cookies();
-  return createServerClient(SUPABASE_URL, SUPABASE_CLAVE_PUBLICA, {
+  return createServerClient(urlSupabase(), clavePublicaSupabase(), {
     cookies: {
       getAll() {
         return almacen.getAll();

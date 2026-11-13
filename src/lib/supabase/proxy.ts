@@ -1,6 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
-import { SUPABASE_CLAVE_PUBLICA, SUPABASE_URL } from "@/lib/entorno";
+import { clavePublicaSupabase, urlSupabase } from "@/lib/entorno";
 
 const RUTAS_PUBLICAS = ["/login", "/auth"];
 
@@ -11,7 +11,7 @@ const RUTAS_PUBLICAS = ["/login", "/auth"];
 export async function actualizarSesion(request: NextRequest) {
   let respuesta = NextResponse.next({ request });
 
-  const supabase = createServerClient(SUPABASE_URL, SUPABASE_CLAVE_PUBLICA, {
+  const supabase = createServerClient(urlSupabase(), clavePublicaSupabase(), {
     cookies: {
       getAll() {
         return request.cookies.getAll();
