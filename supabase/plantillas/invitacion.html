@@ -1,0 +1,14 @@
+<!-- Plantilla "Invite user" de Supabase Auth. Copiar en Dashboard → Authentication → Emails → Invite user -->
+<div style="font-family: Arial, sans-serif; max-width: 480px; margin: auto; color: #1d2125">
+  <h2 style="color: #f25c0f; margin-bottom: 4px">STOCK SEÑALES</h2>
+  <p>Se creó una cuenta para usted en el sistema de inventario del área de Señales.</p>
+  <p>Presione el botón para activar su cuenta y definir su contraseña:</p>
+  <p>
+    <a
+      href="{{ .SiteURL }}/auth/confirmar?token_hash={{ .TokenHash }}&type=invite&siguiente=%2Fcuenta%3Fdefinir%3D1"
+      style="display: inline-block; background: #f25c0f; color: #fff; padding: 14px 24px; border-radius: 10px; text-decoration: none; font-weight: bold"
+      >Activar mi cuenta</a
+    >
+  </p>
+  <p style="font-size: 12px; color: #6b7280">Si no esperaba este correo, puede ignorarlo.</p>
+</div>

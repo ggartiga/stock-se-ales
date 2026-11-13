@@ -42,23 +42,11 @@ export function ModalRetiro({
   const [observacion, setObservacion] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [resultado, setResultado] = useState<ResultadoMovimiento | null>(null);
-  const solicitudId = useRef<string>("");
+  // El componente se monta de nuevo para cada producto (key en ListaInventario):
+  // cada apertura parte limpia y con un id de solicitud nuevo.
+  const [solicitudInicial] = useState(nuevoUuid);
+  const solicitudId = useRef<string>(solicitudInicial);
   const enviando = useRef(false);
-  const itemCongelado = useRef<ItemInventario | null>(null);
-
-  // Al abrir con un producto: reiniciar el formulario y generar un nuevo id de solicitud.
-  useEffect(() => {
-    if (item && item.inventario_id !== itemCongelado.current?.inventario_id) {
-      itemCongelado.current = item;
-      setPaso("formulario");
-      setCantidad("1");
-      setObservacion("");
-      setError(null);
-      setResultado(null);
-      solicitudId.current = nuevoUuid();
-    }
-    if (!item) itemCongelado.current = null;
-  }, [item]);
 
   // Si el usuario cambia la operación, es una solicitud nueva.
   const cambiarCantidad = (valor: string) => {

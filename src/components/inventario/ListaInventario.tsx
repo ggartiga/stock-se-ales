@@ -38,7 +38,7 @@ export function ListaInventario({
         ))}
       </div>
       )}
-      <ModalRetiro item={actual} alCerrar={() => setSeleccionado(null)} volverA={volverA} />
+      <ModalRetiro key={actual?.inventario_id ?? "cerrado"} item={actual} alCerrar={() => setSeleccionado(null)} volverA={volverA} />
     </>
   );
 }

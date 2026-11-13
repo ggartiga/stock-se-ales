@@ -1,0 +1,13 @@
+<!-- Plantilla "Reset password" de Supabase Auth. Copiar en Dashboard → Authentication → Emails → Reset password -->
+<div style="font-family: Arial, sans-serif; max-width: 480px; margin: auto; color: #1d2125">
+  <h2 style="color: #f25c0f; margin-bottom: 4px">STOCK SEÑALES</h2>
+  <p>Recibimos una solicitud para restablecer su contraseña.</p>
+  <p>
+    <a
+      href="{{ .SiteURL }}/auth/confirmar?token_hash={{ .TokenHash }}&type=recovery&siguiente=%2Fcuenta%3Fdefinir%3D1"
+      style="display: inline-block; background: #f25c0f; color: #fff; padding: 14px 24px; border-radius: 10px; text-decoration: none; font-weight: bold"
+      >Crear nueva contraseña</a
+    >
+  </p>
+  <p style="font-size: 12px; color: #6b7280">Si usted no lo solicitó, ignore este correo: su contraseña no cambiará.</p>
+</div>

@@ -1,4 +1,5 @@
-import { NextResponse, type NextRequest } from "next/server";
+import { redirect } from "next/navigation";
+import type { NextRequest } from "next/server";
 import type { EmailOtpType } from "@supabase/supabase-js";
 import { crearClienteServidor } from "@/lib/supabase/servidor";
 import { rutaInternaSegura } from "@/lib/dominio/permisos";
@@ -23,15 +24,17 @@ export async function GET(request: NextRequest) {
 
   const supabase = await crearClienteServidor();
 
+  let valido = false;
   if (tokenHash && tipo && TIPOS_VALIDOS.includes(tipo)) {
     const { error } = await supabase.auth.verifyOtp({ type: tipo, token_hash: tokenHash });
-    if (!error) return NextResponse.redirect(new URL(siguiente, url.origin));
-    registrarError("auth.confirmar.verifyOtp", { message: error.message, code: error.code });
+    valido = !error;
+    if (error) registrarError("auth.confirmar.verifyOtp", { message: error.message, code: error.code });
   } else if (codigo) {
     const { error } = await supabase.auth.exchangeCodeForSession(codigo);
-    if (!error) return NextResponse.redirect(new URL(siguiente, url.origin));
-    registrarError("auth.confirmar.exchangeCode", { message: error.message, code: error.code });
+    valido = !error;
+    if (error) registrarError("auth.confirmar.exchangeCode", { message: error.message, code: error.code });
   }
 
-  return NextResponse.redirect(new URL("/login?error=enlace", url.origin));
+  // redirect() (fuera de try/catch) conserva las cookies de sesión recién creadas.
+  redirect(valido ? siguiente : "/login?error=enlace");
 }

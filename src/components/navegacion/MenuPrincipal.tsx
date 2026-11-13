@@ -15,8 +15,6 @@ export function MenuPrincipal({ nombre, correo, rol }: { nombre: string; correo:
   const contenedor = useRef<HTMLDivElement>(null);
   const ruta = usePathname();
 
-  useEffect(() => setAbierto(false), [ruta]);
-
   useEffect(() => {
     if (!abierto) return;
     const alPulsarFuera = (e: PointerEvent) => {
@@ -65,6 +63,7 @@ export function MenuPrincipal({ nombre, correo, rol }: { nombre: string; correo:
                   key={o.id}
                   role="menuitem"
                   href={o.href!}
+                  onClick={() => setAbierto(false)}
                   className={`flex min-h-14 items-center gap-3 px-4 text-base font-semibold hover:bg-gray-50 ${
                     activo ? "text-marca-600" : "text-tinta"
                   }`}
@@ -75,7 +74,7 @@ export function MenuPrincipal({ nombre, correo, rol }: { nombre: string; correo:
                 </Link>
               );
             })}
-            <Link role="menuitem" href="/cuenta" className="flex min-h-14 items-center gap-3 px-4 text-base font-semibold hover:bg-gray-50">
+            <Link role="menuitem" href="/cuenta" onClick={() => setAbierto(false)} className="flex min-h-14 items-center gap-3 px-4 text-base font-semibold hover:bg-gray-50">
               <CircleUser className="size-5 shrink-0" aria-hidden="true" />
               <span className="flex-1">Mi cuenta</span>
               <ChevronRight className="size-4 text-gray-400" aria-hidden="true" />

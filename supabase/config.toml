@@ -1,0 +1,51 @@
+# Configuración de Supabase local (CLI: `npx supabase start`).
+# En la nube estos valores se configuran en el Dashboard (ver docs/DESPLIEGUE.md).
+project_id = "stock-senales"
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[db]
+port = 54322
+major_version = 17
+
+[db.seed]
+enabled = true
+sql_paths = ["./seed.sql"]
+
+[studio]
+enabled = true
+port = 54323
+
+[inbucket]
+# Bandeja de correo local para ver invitaciones y recuperaciones: http://localhost:54324
+enabled = true
+port = 54324
+
+[auth]
+enabled = true
+site_url = "http://localhost:3000"
+additional_redirect_urls = ["http://localhost:3000/auth/confirmar**"]
+jwt_expiry = 3600
+enable_refresh_token_rotation = true
+# Sistema corporativo: las cuentas las crea un administrador (no hay registro público).
+enable_signup = false
+minimum_password_length = 8
+password_requirements = "letters_digits"
+
+[auth.email]
+enable_signup = false
+enable_confirmations = false
+secure_password_change = false
+
+[auth.email.template.invite]
+subject = "Invitación a STOCK SEÑALES"
+content_path = "./supabase/plantillas/invitacion.html"
+
+[auth.email.template.recovery]
+subject = "Recuperar contraseña — STOCK SEÑALES"
+content_path = "./supabase/plantillas/recuperacion.html"
