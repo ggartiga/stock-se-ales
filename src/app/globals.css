@@ -1,0 +1,127 @@
+@import "tailwindcss";
+
+/* ================================================================
+   STOCK SEÑALES — Identidad visual
+   Naranja (principal) · Blanco (secundario) · Gris claro (apoyo)
+   Verde = disponible · Naranja = stock bajo · Rojo = sin stock
+   ================================================================ */
+@theme {
+  --color-marca-50: #fff5ed;
+  --color-marca-100: #ffe7d4;
+  --color-marca-200: #ffcaa6;
+  --color-marca-300: #ffa36d;
+  --color-marca-400: #fd7a38;
+  --color-marca-500: #f25c0f;
+  --color-marca-600: #d94a07;
+  --color-marca-700: #b33a09;
+  --color-marca-800: #8e3010;
+  --color-marca-900: #742a10;
+
+  --color-tinta: #1d2125;
+  --color-tinta-suave: #4b5563;
+  --color-fondo: #f3f4f6;
+  --color-borde: #e5e7eb;
+
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+
+  --radius-tarjeta: 1.25rem;
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    @apply bg-fondo text-tinta antialiased;
+    -webkit-tap-highlight-color: transparent;
+    overflow-x: hidden;
+  }
+  button,
+  a,
+  input,
+  select,
+  textarea,
+  label {
+    touch-action: manipulation;
+  }
+  /* Evita el zoom automático de iOS al enfocar campos (requiere >= 16px) */
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+  }
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-marca-500;
+  }
+}
+
+/* Clases reutilizables (Tailwind v4: @utility permite usarlas con @apply) */
+@utility tarjeta {
+  @apply rounded-tarjeta border border-borde bg-white shadow-sm;
+}
+
+@utility boton {
+  @apply inline-flex min-h-12 select-none items-center justify-center gap-2 rounded-xl px-5 text-base font-semibold transition
+    active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 disabled:active:scale-100;
+}
+@utility boton-primario {
+  @apply boton bg-marca-500 text-white shadow-sm hover:bg-marca-600;
+}
+@utility boton-secundario {
+  @apply boton border border-borde bg-white text-tinta hover:bg-gray-50;
+}
+@utility boton-peligro {
+  @apply boton bg-red-600 text-white hover:bg-red-700;
+}
+@utility boton-fantasma {
+  @apply boton px-3 text-tinta-suave hover:bg-gray-100;
+}
+@utility boton-icono {
+  @apply inline-flex size-12 items-center justify-center rounded-full text-tinta transition hover:bg-gray-100 active:scale-95;
+}
+
+@utility etiqueta {
+  @apply mb-1.5 block text-sm font-semibold text-tinta;
+}
+@utility campo {
+  @apply block min-h-12 w-full rounded-xl border border-gray-300 bg-white px-4 text-base text-tinta shadow-xs
+    placeholder:text-gray-400 focus:border-marca-500 focus:outline-none focus:ring-4 focus:ring-marca-100
+    disabled:bg-gray-100;
+}
+@utility ayuda {
+  @apply mt-1 text-sm text-tinta-suave;
+}
+
+@utility alerta-error {
+  @apply flex items-start gap-2 rounded-xl border border-red-200 bg-red-50 p-3 text-sm font-medium text-red-800;
+}
+@utility alerta-exito {
+  @apply flex items-start gap-2 rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-sm font-medium text-emerald-800;
+}
+@utility alerta-info {
+  @apply flex items-start gap-2 rounded-xl border border-marca-200 bg-marca-50 p-3 text-sm font-medium text-marca-800;
+}
+
+@utility titulo-pagina {
+  @apply text-2xl font-extrabold tracking-tight text-tinta sm:text-3xl;
+}
+
+/* Impresión de etiquetas QR */
+@media print {
+  .no-imprimir {
+    display: none !important;
+  }
+  body {
+    background: white !important;
+  }
+  .hoja-qr {
+    padding: 0 !important;
+  }
+  .etiqueta-qr {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+  @page {
+    margin: 10mm;
+  }
+}

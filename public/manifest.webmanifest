@@ -1,0 +1,14 @@
+{
+  "name": "STOCK SEÑALES",
+  "short_name": "Stock Señales",
+  "description": "Gestión y control de inventario del área de Señales",
+  "start_url": "/inventario",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f3f4f6",
+  "theme_color": "#f25c0f",
+  "lang": "es-CL",
+  "icons": [
+    { "src": "/icono.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
