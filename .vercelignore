@@ -1,0 +1,11 @@
+# Nunca subir claves: las variables se configuran en el panel de Vercel.
+.env
+.env.local
+.env.*.local
+supabase/.temp
+supabase/.branches
+node_modules
+.next
+coverage
+playwright-report
+test-results
