@@ -64,6 +64,37 @@ export async function eliminarAlmacen(_p: EstadoFormulario, datos: FormData): Pr
   const id = String(datos.get("id") ?? "");
   if (!esUuid(id)) return { ok: false, mensaje: "Almacén inválido." };
   const supabase = await crearClienteServidor();
+
+  // Sólo se elimina si ninguna de sus ubicaciones tiene productos ni historial;
+  // se comprueba antes para no dejar el almacén a medio borrar.
+  const { data: ubicaciones, error: errorUbic } = await supabase.from("ubicaciones").select("id").eq("almacen_id", id);
+  if (errorUbic) {
+    registrarError("almacenes.eliminar.ubicaciones", errorUbic);
+    return { ok: false, mensaje: mensajeDeError(errorUbic) };
+  }
+  const idsUbicaciones = (ubicaciones ?? []).map((u) => u.id);
+  if (idsUbicaciones.length > 0) {
+    const [inv, mov] = await Promise.all([
+      supabase.from("inventario").select("id", { count: "exact", head: true }).in("ubicacion_id", idsUbicaciones),
+      supabase.from("movimientos").select("id", { count: "exact", head: true }).eq("almacen_id", id),
+    ]);
+    if (inv.error || mov.error) {
+      registrarError("almacenes.eliminar.revisar", inv.error ?? mov.error);
+      return { ok: false, mensaje: mensajeDeError((inv.error ?? mov.error)!) };
+    }
+    if ((inv.count ?? 0) > 0) {
+      return { ok: false, mensaje: "No se puede eliminar: tiene productos en sus ubicaciones. Quítelos primero o marque el almacén como Inactivo." };
+    }
+    if ((mov.count ?? 0) > 0) {
+      return { ok: false, mensaje: "No se puede eliminar: tiene movimientos en el historial, que se conserva. Márquelo como Inactivo." };
+    }
+    const { error: errorBorrarUbic } = await supabase.from("ubicaciones").delete().eq("almacen_id", id);
+    if (errorBorrarUbic) {
+      registrarError("almacenes.eliminar.borrarUbicaciones", errorBorrarUbic);
+      return { ok: false, mensaje: mensajeDeError(errorBorrarUbic) };
+    }
+  }
+
   const { data, error } = await supabase.from("almacenes").delete().eq("id", id).select("id");
   if (error) {
     registrarError("almacenes.eliminar", error);

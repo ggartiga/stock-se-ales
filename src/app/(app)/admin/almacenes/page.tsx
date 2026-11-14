@@ -49,17 +49,19 @@ export default async function PaginaAlmacenes() {
                 <Link href={`/admin/almacenes/qr?almacen=${a.id}`} className="boton-secundario min-h-10 px-3 text-sm">
                   <Printer className="size-4" aria-hidden="true" /> QR del almacén
                 </Link>
-                {a.ubicaciones.length === 0 && (
-                  <AccionConfirmada
-                    accion={eliminarAlmacen}
-                    campos={{ id: a.id }}
-                    textoBoton="Eliminar"
-                    icono={<Trash2 className="size-4" aria-hidden="true" />}
-                    titulo={`Eliminar ${a.nombre}`}
-                    descripcion="El almacén no tiene ubicaciones. Esta acción no se puede deshacer."
-                    textoConfirmar="Eliminar"
-                  />
-                )}
+                <AccionConfirmada
+                  accion={eliminarAlmacen}
+                  campos={{ id: a.id }}
+                  textoBoton="Eliminar"
+                  icono={<Trash2 className="size-4" aria-hidden="true" />}
+                  titulo={`Eliminar ${a.nombre}`}
+                  descripcion={
+                    a.ubicaciones.length === 0
+                      ? "El almacén no tiene ubicaciones. Esta acción no se puede deshacer."
+                      : `Se eliminará junto con sus ${a.ubicaciones.length} ubicación(es) vacías. Si alguna tiene productos o movimientos no se podrá eliminar: quite esos productos o marque el almacén como Inactivo. Los QR impresos dejarán de funcionar.`
+                  }
+                  textoConfirmar="Eliminar"
+                />
               </div>
             </div>
             <FormularioAlmacen almacen={a} />
