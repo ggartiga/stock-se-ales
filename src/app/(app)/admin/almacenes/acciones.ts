@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { requerirRol } from "@/lib/sesion";
+import { ROLES_GESTION_INVENTARIO } from "@/lib/dominio/permisos";
 import { crearClienteServidor } from "@/lib/supabase/servidor";
 import { esUuid, validarCodigoCorto, validarTexto } from "@/lib/dominio/validacion";
 import { mensajeDeError } from "@/lib/dominio/errores";
@@ -17,7 +18,7 @@ function refrescar() {
 }
 
 export async function crearAlmacen(_p: EstadoFormulario, datos: FormData): Promise<EstadoFormulario> {
-  await requerirRol(["administrador"]);
+  await requerirRol(ROLES_GESTION_INVENTARIO);
   const nombre = validarTexto(String(datos.get("nombre") ?? ""), "El nombre", { min: 2, max: 100, obligatorio: true });
   const codigo = validarCodigoCorto(String(datos.get("codigo") ?? ""), "El código");
   if (!nombre.ok) return { ok: false, mensaje: nombre.error };
@@ -35,7 +36,7 @@ export async function crearAlmacen(_p: EstadoFormulario, datos: FormData): Promi
 }
 
 export async function actualizarAlmacen(_p: EstadoFormulario, datos: FormData): Promise<EstadoFormulario> {
-  await requerirRol(["administrador"]);
+  await requerirRol(ROLES_GESTION_INVENTARIO);
   const id = String(datos.get("id") ?? "");
   const nombre = validarTexto(String(datos.get("nombre") ?? ""), "El nombre", { min: 2, max: 100, obligatorio: true });
   const codigo = validarCodigoCorto(String(datos.get("codigo") ?? ""), "El código");
@@ -59,7 +60,7 @@ export async function actualizarAlmacen(_p: EstadoFormulario, datos: FormData): 
 }
 
 export async function eliminarAlmacen(_p: EstadoFormulario, datos: FormData): Promise<EstadoFormulario> {
-  await requerirRol(["administrador"]);
+  await requerirRol(ROLES_GESTION_INVENTARIO);
   const id = String(datos.get("id") ?? "");
   if (!esUuid(id)) return { ok: false, mensaje: "Almacén inválido." };
   const supabase = await crearClienteServidor();
@@ -77,7 +78,7 @@ export async function eliminarAlmacen(_p: EstadoFormulario, datos: FormData): Pr
 }
 
 export async function crearUbicacion(_p: EstadoFormulario, datos: FormData): Promise<EstadoFormulario> {
-  await requerirRol(["administrador"]);
+  await requerirRol(ROLES_GESTION_INVENTARIO);
   const almacenId = String(datos.get("almacen_id") ?? "");
   const codigo = validarCodigoCorto(String(datos.get("codigo_ubicacion") ?? ""), "El código de ubicación");
   const descripcion = validarTexto(String(datos.get("descripcion") ?? ""), "La descripción", { max: 300 });
@@ -99,7 +100,7 @@ export async function crearUbicacion(_p: EstadoFormulario, datos: FormData): Pro
 }
 
 export async function actualizarUbicacion(_p: EstadoFormulario, datos: FormData): Promise<EstadoFormulario> {
-  await requerirRol(["administrador"]);
+  await requerirRol(ROLES_GESTION_INVENTARIO);
   const id = String(datos.get("id") ?? "");
   const codigo = validarCodigoCorto(String(datos.get("codigo_ubicacion") ?? ""), "El código de ubicación");
   const descripcion = validarTexto(String(datos.get("descripcion") ?? ""), "La descripción", { max: 300 });
@@ -123,7 +124,7 @@ export async function actualizarUbicacion(_p: EstadoFormulario, datos: FormData)
 }
 
 export async function eliminarUbicacion(_p: EstadoFormulario, datos: FormData): Promise<EstadoFormulario> {
-  await requerirRol(["administrador"]);
+  await requerirRol(ROLES_GESTION_INVENTARIO);
   const id = String(datos.get("id") ?? "");
   if (!esUuid(id)) return { ok: false, mensaje: "Ubicación inválida." };
   const supabase = await crearClienteServidor();

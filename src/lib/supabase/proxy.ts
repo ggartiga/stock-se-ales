@@ -2,7 +2,7 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { clavePublicaSupabase, urlSupabase } from "@/lib/entorno";
 
-const RUTAS_PUBLICAS = ["/login", "/auth"];
+const RUTAS_PUBLICAS = ["/login", "/registro", "/auth"];
 
 /**
  * Refresca la sesión de Supabase en cada petición y protege las rutas:
@@ -46,7 +46,7 @@ export async function actualizarSesion(request: NextRequest) {
     return redirigir(url);
   }
 
-  if (user && ruta === "/login") {
+  if (user && (ruta === "/login" || ruta === "/registro")) {
     const url = request.nextUrl.clone();
     url.pathname = "/inventario";
     url.search = "";

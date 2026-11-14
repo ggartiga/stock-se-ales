@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { requerirRol } from "@/lib/sesion";
+import { ROLES_GESTION_INVENTARIO } from "@/lib/dominio/permisos";
 import { listarAlmacenes } from "@/lib/consultas";
 import { EncabezadoPagina } from "@/components/ui/EncabezadoPagina";
 import { Alerta } from "@/components/ui/Alerta";
@@ -8,7 +9,7 @@ import { FormularioNuevoProducto } from "./FormularioNuevoProducto";
 export const metadata = { title: "Nuevo producto" };
 
 export default async function PaginaNuevoProducto() {
-  await requerirRol(["administrador"]);
+  await requerirRol(ROLES_GESTION_INVENTARIO);
   const almacenes = (await listarAlmacenes({ soloActivos: true })).filter((a) => a.ubicaciones.length > 0);
 
   return (

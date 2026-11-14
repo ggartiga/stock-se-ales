@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { requerirRol } from "@/lib/sesion";
+import { ROLES_GESTION_INVENTARIO } from "@/lib/dominio/permisos";
 import { crearClienteServidor } from "@/lib/supabase/servidor";
 import { esUuid, validarCantidadNoNegativa, validarCodigoSap, validarTexto } from "@/lib/dominio/validacion";
 import { mensajeDeError } from "@/lib/dominio/errores";
@@ -27,7 +28,7 @@ function leerProducto(datos: FormData) {
 }
 
 export async function crearProducto(_previo: EstadoFormulario, datos: FormData): Promise<EstadoFormulario> {
-  await requerirRol(["administrador"]);
+  await requerirRol(ROLES_GESTION_INVENTARIO);
   const p = leerProducto(datos);
   if ("error" in p) return { ok: false, mensaje: p.error ?? null };
 
@@ -60,7 +61,7 @@ export async function crearProducto(_previo: EstadoFormulario, datos: FormData):
 }
 
 export async function actualizarProducto(_previo: EstadoFormulario, datos: FormData): Promise<EstadoFormulario> {
-  await requerirRol(["administrador"]);
+  await requerirRol(ROLES_GESTION_INVENTARIO);
   const id = String(datos.get("id") ?? "");
   if (!esUuid(id)) return { ok: false, mensaje: "Producto inválido." };
   const p = leerProducto(datos);
@@ -85,7 +86,7 @@ export async function actualizarProducto(_previo: EstadoFormulario, datos: FormD
 }
 
 export async function actualizarMinimo(_previo: EstadoFormulario, datos: FormData): Promise<EstadoFormulario> {
-  await requerirRol(["administrador"]);
+  await requerirRol(ROLES_GESTION_INVENTARIO);
   const inventarioId = String(datos.get("inventario_id") ?? "");
   const minima = validarCantidadNoNegativa(String(datos.get("cantidad_minima") ?? ""), "Cantidad mínima");
   if (!esUuid(inventarioId)) return { ok: false, mensaje: "Registro inválido." };
@@ -103,7 +104,7 @@ export async function actualizarMinimo(_previo: EstadoFormulario, datos: FormDat
 }
 
 export async function asignarUbicacion(_previo: EstadoFormulario, datos: FormData): Promise<EstadoFormulario> {
-  await requerirRol(["administrador"]);
+  await requerirRol(ROLES_GESTION_INVENTARIO);
   const productoId = String(datos.get("producto_id") ?? "");
   const ubicacionId = String(datos.get("ubicacion_id") ?? "");
   const solicitud = String(datos.get("solicitud_id") ?? "");
@@ -132,7 +133,7 @@ export async function asignarUbicacion(_previo: EstadoFormulario, datos: FormDat
 }
 
 export async function quitarDeUbicacion(_previo: EstadoFormulario, datos: FormData): Promise<EstadoFormulario> {
-  await requerirRol(["administrador"]);
+  await requerirRol(ROLES_GESTION_INVENTARIO);
   const inventarioId = String(datos.get("inventario_id") ?? "");
   if (!esUuid(inventarioId)) return { ok: false, mensaje: "Registro inválido." };
 
@@ -152,7 +153,7 @@ export async function quitarDeUbicacion(_previo: EstadoFormulario, datos: FormDa
 }
 
 export async function eliminarProducto(_previo: EstadoFormulario, datos: FormData): Promise<EstadoFormulario> {
-  await requerirRol(["administrador"]);
+  await requerirRol(ROLES_GESTION_INVENTARIO);
   const id = String(datos.get("id") ?? "");
   if (!esUuid(id)) return { ok: false, mensaje: "Producto inválido." };
   if (String(datos.get("confirmacion") ?? "") !== "ELIMINAR") {
@@ -171,7 +172,7 @@ export async function eliminarProducto(_previo: EstadoFormulario, datos: FormDat
 }
 
 export async function reactivarProducto(_previo: EstadoFormulario, datos: FormData): Promise<EstadoFormulario> {
-  await requerirRol(["administrador"]);
+  await requerirRol(ROLES_GESTION_INVENTARIO);
   const id = String(datos.get("id") ?? "");
   if (!esUuid(id)) return { ok: false, mensaje: "Producto inválido." };
   const supabase = await crearClienteServidor();

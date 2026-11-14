@@ -1,4 +1,4 @@
-import type { Rol } from "./dominio/permisos";
+import { ROLES_GESTION_INVENTARIO, type Rol } from "./dominio/permisos";
 
 /**
  * Definición única del menú y de "Más acciones".
@@ -25,13 +25,13 @@ export const MENU_PRINCIPAL: OpcionMenu[] = [
 ];
 
 export const MAS_ACCIONES: OpcionMenu[] = [
-  { id: "ingreso", titulo: "Ingreso de stock", descripcion: "Registrar recepción de material", href: null, icono: "ingreso", estado: "pendiente", roles: ["administrador"] },
-  { id: "ajustes", titulo: "Ajustes de inventario", descripcion: "Corregir diferencias de conteo", href: null, icono: "ajuste", estado: "pendiente", roles: ["administrador"] },
-  { id: "productos", titulo: "Administración de productos", descripcion: "Crear, editar y eliminar productos", href: "/admin/productos", icono: "productos", estado: "disponible", roles: ["administrador"] },
-  { id: "almacenes", titulo: "Administración de almacenes", descripcion: "Almacenes, ubicaciones y racks", href: "/admin/almacenes", icono: "almacenes", estado: "disponible", roles: ["administrador"] },
-  { id: "qr", titulo: "Imprimir códigos QR", descripcion: "Etiquetas para los racks", href: "/admin/almacenes/qr", icono: "qr", estado: "disponible", roles: ["administrador"] },
+  { id: "ingreso", titulo: "Ingreso de stock", descripcion: "Registrar recepción de material", href: null, icono: "ingreso", estado: "pendiente", roles: ROLES_GESTION_INVENTARIO },
+  { id: "ajustes", titulo: "Ajustes de inventario", descripcion: "Corregir diferencias de conteo", href: null, icono: "ajuste", estado: "pendiente", roles: ROLES_GESTION_INVENTARIO },
+  { id: "productos", titulo: "Administración de productos", descripcion: "Crear, editar y eliminar productos", href: "/admin/productos", icono: "productos", estado: "disponible", roles: ROLES_GESTION_INVENTARIO },
+  { id: "almacenes", titulo: "Administración de almacenes", descripcion: "Almacenes, ubicaciones y racks", href: "/admin/almacenes", icono: "almacenes", estado: "disponible", roles: ROLES_GESTION_INVENTARIO },
+  { id: "qr", titulo: "Imprimir códigos QR", descripcion: "Etiquetas para los racks", href: "/admin/almacenes/qr", icono: "qr", estado: "disponible", roles: ROLES_GESTION_INVENTARIO },
   { id: "usuarios", titulo: "Usuarios y roles", descripcion: "Cuentas de los trabajadores", href: "/admin/usuarios", icono: "usuarios", estado: "disponible", roles: ["administrador"] },
-  { id: "reportes", titulo: "Reportes", descripcion: "Consumo y rotación de repuestos", href: null, icono: "reportes", estado: "pendiente", roles: ["administrador", "supervisor"] },
+  { id: "reportes", titulo: "Reportes", descripcion: "Consumo y rotación de repuestos", href: null, icono: "reportes", estado: "pendiente", roles: ROLES_GESTION_INVENTARIO },
 ];
 
 export type AccesoOpcion = "permitido" | "restringido" | "pendiente";

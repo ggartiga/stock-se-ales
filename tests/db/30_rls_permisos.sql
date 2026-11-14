@@ -9,16 +9,28 @@ set role authenticated;
 do $$ begin
   perform pruebas.afirmar((select count(*) = 9 from public.v_inventario), 'Trabajador consulta todo el inventario');
 end $$;
-select pruebas.debe_fallar($$insert into public.productos (codigo_sap, elemento) values ('X-1', 'Intruso')$$,
-  '42501', 'Trabajador no puede crear productos');
-select pruebas.debe_fallar($$insert into public.almacenes (nombre, codigo) values ('Intruso', 'INT')$$,
-  '42501', 'Trabajador no puede crear almacenes');
-select pruebas.debe_fallar($$select public.crear_producto('X-2', 'Intruso', null, null, 0, 0, gen_random_uuid())$$,
-  'SIN_PERMISO', 'Trabajador no puede usar crear_producto');
-select pruebas.debe_fallar($$select public.eliminar_producto('d0000000-0000-4000-8000-000000000001')$$,
-  'SIN_PERMISO', 'Trabajador no puede eliminar productos');
-select pruebas.debe_fallar($$select public.registrar_ingreso((select inventario_id from public.v_inventario limit 1), 5, gen_random_uuid())$$,
-  'SIN_PERMISO', 'Trabajador no puede registrar ingresos');
+-- Migración 5: el trabajador gestiona almacenes, productos e ingresos.
+do $$
+declare v_producto uuid; v_resultado text;
+begin
+  insert into public.almacenes (nombre, codigo, es_prueba) values ('Almacén Trabajador [PRUEBA]', 'PRB-TRB', true);
+  insert into public.ubicaciones (almacen_id, codigo_ubicacion) select id, 'T1' from public.almacenes where codigo = 'PRB-TRB';
+  perform pruebas.afirmar((select count(*) = 1 from public.ubicaciones u join public.almacenes a on a.id = u.almacen_id where a.codigo = 'PRB-TRB'),
+                          'Trabajador crea almacén y ubicación');
+  delete from public.ubicaciones where codigo_ubicacion = 'T1';
+  delete from public.almacenes where codigo = 'PRB-TRB';
+  perform pruebas.afirmar(not exists (select 1 from public.almacenes where codigo = 'PRB-TRB'), 'Trabajador elimina almacén y ubicación');
+
+  v_producto := public.crear_producto('PRB-TRB-1', 'Producto del trabajador', null, null, 0, 0, gen_random_uuid());
+  perform pruebas.afirmar(v_producto is not null, 'Trabajador puede usar crear_producto');
+  v_resultado := public.eliminar_producto(v_producto);
+  perform pruebas.afirmar(v_resultado = 'eliminado', 'Trabajador puede eliminar productos');
+end $$;
+-- Llega a la validación de cantidad: ya no lo detiene la comprobación de rol.
+select pruebas.debe_fallar($$select public.registrar_ingreso((select inventario_id from public.v_inventario limit 1), 0, gen_random_uuid())$$,
+  'CANTIDAD_INVALIDA', 'Trabajador puede registrar ingresos (sin rechazo por rol)');
+select pruebas.debe_fallar($$select public.admin_actualizar_usuario('33333333-3333-4333-8333-333333333333', 'Yo', 'administrador', true)$$,
+  'SIN_PERMISO', 'Trabajador no puede administrar usuarios');
 select pruebas.debe_fallar($$update public.inventario set cantidad_actual = 999$$,
   '42501', 'Trabajador no puede modificar el stock directamente');
 select pruebas.debe_fallar($$insert into public.movimientos (solicitud_id, producto_id, inventario_id, usuario_id, trabajador, correo_trabajador,
@@ -30,28 +42,29 @@ select pruebas.debe_fallar($$insert into public.movimientos (solicitud_id, produ
 select pruebas.debe_fallar($$select privado.aplicar_movimiento('33333333-3333-4333-8333-333333333333',
       (select inventario_id from public.v_inventario limit 1), 'INGRESO', 100, gen_random_uuid())$$,
   '42501', 'Las funciones internas (esquema privado) no son accesibles');
-do $$
-declare v_filas int;
-begin
-  -- Un DELETE con RLS sin política no falla: simplemente no afecta filas.
-  delete from public.productos;
-  get diagnostics v_filas = row_count;
-  perform pruebas.afirmar(v_filas = 0, 'DELETE de productos por un trabajador no afecta filas');
-end $$;
+select pruebas.debe_fallar($$delete from public.productos where id = 'd0000000-0000-4000-8000-000000000001'$$,
+  '23503', 'Un producto con inventario no se borra directamente (integridad referencial)');
 
 -- ---------------- Supervisor ----------------
 reset role;
 select pruebas.sesion('22222222-2222-4222-8222-222222222222');
 set role authenticated;
-select pruebas.debe_fallar($$insert into public.ubicaciones (almacen_id, codigo_ubicacion) values ('a0000000-0000-4000-8000-000000000001', 'Z9')$$,
-  '42501', 'Supervisor no puede crear ubicaciones');
 do $$
-declare v_filas int;
+declare v_filas int; v_original text;
 begin
+  insert into public.ubicaciones (almacen_id, codigo_ubicacion) values ('a0000000-0000-4000-8000-000000000001', 'Z9');
+  delete from public.ubicaciones where almacen_id = 'a0000000-0000-4000-8000-000000000001' and codigo_ubicacion = 'Z9';
+  get diagnostics v_filas = row_count;
+  perform pruebas.afirmar(v_filas = 1, 'Supervisor crea y elimina ubicaciones');
+
+  select elemento into v_original from public.productos where id = 'd0000000-0000-4000-8000-000000000001';
   update public.productos set elemento = 'Cambiado' where id = 'd0000000-0000-4000-8000-000000000001';
   get diagnostics v_filas = row_count;
-  perform pruebas.afirmar(v_filas = 0, 'Supervisor no puede editar productos');
+  perform pruebas.afirmar(v_filas = 1, 'Supervisor puede editar productos');
+  update public.productos set elemento = v_original where id = 'd0000000-0000-4000-8000-000000000001';
 end $$;
+select pruebas.debe_fallar($$select public.admin_actualizar_usuario('22222222-2222-4222-8222-222222222222', 'Yo', 'administrador', true)$$,
+  'SIN_PERMISO', 'Supervisor no puede administrar usuarios');
 
 -- ---------------- Administrador ----------------
 reset role;

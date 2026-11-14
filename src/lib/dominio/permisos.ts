@@ -16,9 +16,12 @@ export function esRol(valor: unknown): valor is Rol {
   return typeof valor === "string" && (ROLES as readonly string[]).includes(valor);
 }
 
+/** Roles que gestionan inventario, productos, almacenes y QR (migración 5). */
+export const ROLES_GESTION_INVENTARIO: Rol[] = ["administrador", "supervisor", "trabajador"];
+
 export const permisos = {
   retirar: (_rol: Rol) => true,
-  administrarInventario: (rol: Rol) => rol === "administrador",
+  administrarInventario: (rol: Rol) => ROLES_GESTION_INVENTARIO.includes(rol),
   administrarUsuarios: (rol: Rol) => rol === "administrador",
   verHistorialCompleto: (rol: Rol) => rol === "administrador" || rol === "supervisor",
   verUsuarios: (rol: Rol) => rol === "administrador" || rol === "supervisor",

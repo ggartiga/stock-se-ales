@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { MapPin, Printer, QrCode, Trash2, Warehouse } from "lucide-react";
 import { requerirRol } from "@/lib/sesion";
+import { ROLES_GESTION_INVENTARIO } from "@/lib/dominio/permisos";
 import { listarAlmacenes } from "@/lib/consultas";
 import { codigoCortoQR } from "@/lib/dominio/qr";
 import { EncabezadoPagina } from "@/components/ui/EncabezadoPagina";
@@ -11,7 +12,7 @@ import { FormularioAlmacen, FormularioNuevaUbicacion, FormularioNuevoAlmacen, Fo
 export const metadata = { title: "Almacenes y ubicaciones" };
 
 export default async function PaginaAlmacenes() {
-  await requerirRol(["administrador"]);
+  await requerirRol(ROLES_GESTION_INVENTARIO);
   const almacenes = await listarAlmacenes();
 
   return (

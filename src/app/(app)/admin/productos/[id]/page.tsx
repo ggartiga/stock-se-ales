@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ExternalLink, Trash2 } from "lucide-react";
 import { requerirRol } from "@/lib/sesion";
+import { ROLES_GESTION_INVENTARIO } from "@/lib/dominio/permisos";
 import { crearClienteServidor } from "@/lib/supabase/servidor";
 import { listarAlmacenes } from "@/lib/consultas";
 import { esUuid } from "@/lib/dominio/validacion";
@@ -29,7 +30,7 @@ export default async function PaginaEditarProducto({
   params: Promise<{ id: string }>;
   searchParams: Promise<{ creado?: string }>;
 }) {
-  await requerirRol(["administrador"]);
+  await requerirRol(ROLES_GESTION_INVENTARIO);
   const { id } = await params;
   const { creado } = await searchParams;
   if (!esUuid(id)) notFound();

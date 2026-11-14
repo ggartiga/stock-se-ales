@@ -9,6 +9,7 @@ import {
   validarCodigoCorto,
   validarTexto,
   validarCorreo,
+  validarCorreoRegistro,
   validarContrasena,
   esUuid,
 } from "../../src/lib/dominio/validacion";
@@ -185,9 +186,18 @@ describe("Permisos y navegación", () => {
     assert.equal(rutaInternaSegura(null), "/inventario");
     assert.equal(rutaInternaSegura("/login"), "/inventario");
   });
+  it("el registro sólo acepta correos @metro.cl", () => {
+    assert.deepEqual(validarCorreoRegistro(" Juan.Perez@Metro.cl "), { ok: true, valor: "juan.perez@metro.cl" });
+    assert.ok(!validarCorreoRegistro("juan@gmail.com").ok);
+    assert.ok(!validarCorreoRegistro("juan@metro.cl.falso.com").ok);
+    assert.ok(!validarCorreoRegistro("juan@submetro.cl").ok);
+    assert.ok(!validarCorreoRegistro("no-es-correo").ok);
+  });
   it("roles", () => {
     assert.ok(permisos.administrarInventario("administrador"));
-    assert.ok(!permisos.administrarInventario("supervisor"));
+    assert.ok(permisos.administrarInventario("supervisor"));
+    assert.ok(permisos.administrarInventario("trabajador"));
+    assert.ok(!permisos.administrarUsuarios("trabajador"));
     assert.ok(permisos.verHistorialCompleto("supervisor"));
     assert.ok(!permisos.verHistorialCompleto("trabajador"));
     assert.ok(permisos.retirar("trabajador"));
@@ -203,11 +213,15 @@ describe("Permisos y navegación", () => {
       else assert.ok(o.href, o.titulo);
     }
   });
-  it("las opciones administrativas quedan restringidas para trabajadores", () => {
-    const productos = MAS_ACCIONES.find((o) => o.id === "productos")!;
-    assert.equal(accesoOpcion(productos, "trabajador"), "restringido");
-    assert.equal(accesoOpcion(productos, "administrador"), "permitido");
-    const ingreso = MAS_ACCIONES.find((o) => o.id === "ingreso")!;
-    assert.equal(accesoOpcion(ingreso, "administrador"), "pendiente");
+  it("los trabajadores gestionan inventario, pero no usuarios", () => {
+    const opcion = (id: string) => MAS_ACCIONES.find((o) => o.id === id)!;
+    for (const id of ["productos", "almacenes", "qr"]) {
+      assert.equal(accesoOpcion(opcion(id), "trabajador"), "permitido", id);
+    }
+    for (const id of ["ingreso", "ajustes", "reportes"]) {
+      assert.equal(accesoOpcion(opcion(id), "trabajador"), "pendiente", id);
+    }
+    assert.equal(accesoOpcion(opcion("usuarios"), "trabajador"), "restringido");
+    assert.equal(accesoOpcion(opcion("usuarios"), "administrador"), "permitido");
   });
 });

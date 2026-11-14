@@ -91,7 +91,20 @@ export function validarCorreo(entrada: string | null | undefined): Resultado<str
   return { ok: true, valor: v };
 }
 
-const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+/** Dominio de correo obligatorio para registrarse (mantener alineado con la migración 6). */
+export const DOMINIO_REGISTRO = "metro.cl";
+
+/** Correo válido y del dominio de la empresa (p. ej. nombre@metro.cl). */
+export function validarCorreoRegistro(entrada: string | null | undefined): Resultado<string> {
+  const correo = validarCorreo(entrada);
+  if (!correo.ok) return correo;
+  if (!correo.valor!.endsWith(`@${DOMINIO_REGISTRO}`)) {
+    return { ok: false, error: `Debe registrarse con su correo de trabajo @${DOMINIO_REGISTRO}.` };
+  }
+  return correo;
+}
+
+const UUID =/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 export function esUuid(valor: unknown): valor is string {
   return typeof valor === "string" && UUID.test(valor);
 }

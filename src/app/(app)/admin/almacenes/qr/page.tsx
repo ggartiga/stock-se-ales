@@ -1,6 +1,7 @@
 import Link from "next/link";
 import QRCode from "qrcode";
 import { requerirRol } from "@/lib/sesion";
+import { ROLES_GESTION_INVENTARIO } from "@/lib/dominio/permisos";
 import { listarAlmacenes } from "@/lib/consultas";
 import { construirUrlQR, codigoCortoQR } from "@/lib/dominio/qr";
 import { esUuid } from "@/lib/dominio/validacion";
@@ -31,7 +32,7 @@ export default async function PaginaImprimirQR({
 }: {
   searchParams: Promise<{ almacen?: string; ubicacion?: string; tamano?: string }>;
 }) {
-  await requerirRol(["administrador"]);
+  await requerirRol(ROLES_GESTION_INVENTARIO);
   const { almacen, ubicacion, tamano } = await searchParams;
   const grande = tamano === "grande";
 

@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useActionState, useState } from "react";
 import { KeyRound, LogIn, Mail } from "lucide-react";
 import { iniciarSesion, solicitarRecuperacion } from "@/app/auth/acciones";
@@ -66,8 +67,11 @@ export function FormularioIngreso({ siguiente, errorEnlace }: { siguiente: strin
       <button type="button" className="boton-fantasma w-full" onClick={() => setModo("recuperar")}>
         <KeyRound className="size-4" aria-hidden="true" /> ¿Olvidó su contraseña?
       </button>
-      <p className="pt-2 text-center text-xs text-tinta-suave">
-        Las cuentas las crea el administrador del sistema.
+      <p className="pt-2 text-center text-sm text-tinta-suave">
+        ¿No tiene cuenta?{" "}
+        <Link href="/registro" className="font-semibold text-marca-600 underline-offset-2 hover:underline">
+          Crear cuenta
+        </Link>
       </p>
     </form>
   );

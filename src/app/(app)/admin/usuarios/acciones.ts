@@ -54,7 +54,8 @@ export async function crearUsuario(_previo: EstadoFormulario, datos: FormData): 
         })
       : await admin.auth.admin.inviteUserByEmail(correo.valor, {
           data: metadatos,
-          redirectTo: `${URL_SITIO}/auth/confirmar?siguiente=${encodeURIComponent("/cuenta?definir=1")}`,
+          // El cliente admin usa el flujo implícito: la sesión llega en el fragmento a /auth/enlace.
+          redirectTo: `${URL_SITIO}/auth/enlace`,
         });
 
   if (resultado.error || !resultado.data.user) {

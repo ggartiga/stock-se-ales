@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Archive, ChevronRight, Plus, Search } from "lucide-react";
 import { requerirRol } from "@/lib/sesion";
+import { ROLES_GESTION_INVENTARIO } from "@/lib/dominio/permisos";
 import { crearClienteServidor } from "@/lib/supabase/servidor";
 import { textoSeguroParaIlike } from "@/lib/filtros";
 import { EncabezadoPagina } from "@/components/ui/EncabezadoPagina";
@@ -22,7 +23,7 @@ export default async function PaginaAdminProductos({
 }: {
   searchParams: Promise<{ q?: string; archivados?: string; resultado?: string }>;
 }) {
-  await requerirRol(["administrador"]);
+  await requerirRol(ROLES_GESTION_INVENTARIO);
   const { q = "", archivados, resultado } = await searchParams;
   const verArchivados = archivados === "1";
   const texto = textoSeguroParaIlike(q.slice(0, 100));

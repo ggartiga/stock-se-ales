@@ -120,9 +120,11 @@ test.describe("Retiro y trazabilidad", () => {
 });
 
 test.describe("Permisos", () => {
-  test("un trabajador no accede a la administración", async ({ page }) => {
+  test("un trabajador gestiona productos pero no usuarios", async ({ page }) => {
     await ingresar(page, TRABAJADOR);
     await page.goto("/admin/productos");
+    await expect(page).toHaveURL(/\/admin\/productos/);
+    await page.goto("/admin/usuarios");
     await expect(page).toHaveURL(/aviso=sin-permiso/);
     await page.goto("/mas-acciones");
     await expect(page.getByText("Restringido").first()).toBeVisible();
